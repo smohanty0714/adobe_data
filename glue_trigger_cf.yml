@@ -1,0 +1,33 @@
+
+---
+AWSTemplateFormatVersion: '2010-09-09'
+# Parameters section contains names that are substituted in the Resources section
+# These parameters are the names the resources created in the Data Catalog
+Parameters:
+  # The existing job to be started by this trigger 
+  CFNJobName:
+    Type: String
+    Default: adobe-data-processor-2
+  # The name of the trigger to be created
+  CFNTriggerName:
+    Type: String
+    Default: glue_data_etl	
+#
+# Resources section defines metadata for the Data Catalog
+# Sample CFN YAML to demonstrate creating a scheduled trigger for a job
+#	
+Resources:                                      
+# Create trigger to run an existing job (CFNJobName) on a cron schedule.	
+  TriggerSample1CFN:
+    Type: AWS::Glue::Trigger   
+    Properties:
+      Name:
+        Ref: CFNTriggerName		
+      Description: Trigger created with CloudFormation
+      Type: SCHEDULED                                                        	   
+      Actions:
+        - JobName: !Ref CFNJobName                	  
+        # Arguments: JSON object
+      # # Run the trigger every 10 minutes on Monday to Friday 		
+      Schedule: cron(0/10 * ? * MON-FRI *) 
+      #Predicate:
