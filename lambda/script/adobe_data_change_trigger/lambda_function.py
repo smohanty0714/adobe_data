@@ -20,7 +20,9 @@ def lambda_handler(event, context):
     key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
     try:
         logger.info('## INITIATED BY EVENT: ')
-        response = glue_client.start_job_run(JobName = glueJobName)
+        response = glue_client.start_job_run(JobName = glueJobName,
+        Arguments = {
+                '--file_name': key})
         logger.info('## STARTED GLUE JOB: ' + glueJobName)
         logger.info('## GLUE JOB RUN ID: ' + response['JobRunId'])
         return response
