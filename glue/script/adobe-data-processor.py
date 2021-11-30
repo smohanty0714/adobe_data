@@ -104,7 +104,7 @@ S3bucket_node3 = glueContext.write_dynamic_frame.from_options(
     transformation_ctx="S3bucket_node3",
 )
 
-job.commit()
+
 
 #rename the file 
 import boto3
@@ -120,3 +120,4 @@ new_name = str(time.strftime("%Y-%m-%d")) + '_SearchKeywordPerformance.csv'
 client.copy_object(Bucket=S3_BUCKET_NAME, CopySource=S3_BUCKET_NAME+'/'+name, Key=S3_PREFIX + new_name)
 client.delete_object(Bucket=S3_BUCKET_NAME, Key=name)
 
+job.commit()
