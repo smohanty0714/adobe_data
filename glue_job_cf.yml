@@ -1,0 +1,47 @@
+
+---
+AWSTemplateFormatVersion: '2010-09-09'
+# Sample CFN YAML to demonstrate creating a job using the public flights S3 table in a public bucket
+#
+# Parameters section contains names that are substituted in the Resources section
+# These parameters are the names the resources created in the Data Catalog
+Parameters:                                                                                                       
+# The name of the job to be created
+  CFNJobName:  
+    Type: String
+    Default: adobe-data-processor-2
+# The name of the IAM role that the job assumes. It must have access to data, script, temporary directory
+  CFNIAMRoleName:  
+    Type: String
+    Default: adobe-glue-s3-role-new
+# The S3 path where the script for this job is located
+  CFNScriptLocation:  
+    Type: String
+    Default: s3://adobe-data-enginneering/code/adobe-data-processor-2	
+#
+#
+# Resources section defines metadata for the Data Catalog
+Resources:                                      
+# Create job to run script which accesses flightscsv table and write to S3 file as parquet.
+# The script already exists and is called by this job	
+  CFNJobFlights:
+    Type: AWS::Glue::Job   
+    Properties:
+      Role: !Ref CFNIAMRoleName  
+      #DefaultArguments: JSON object 
+      #Connections:  No connection needed for S3 to S3 job 
+      #  ConnectionsList  
+      #MaxRetries: Double  
+      Description: Job created with CloudFormation  
+      #LogUri: String  
+      Command:   
+        Name: glueetl  
+        ScriptLocation: !Ref CFNScriptLocation
+             # for access to directories use proper IAM role with permission to buckets and folders that begin with "aws-glue-"					 
+             # script uses temp directory from job definition if required (temp directory not used S3 to S3)
+             # script defines target for output as s3://aws-glue-target/sal    			 
+      AllocatedCapacity: 2  
+      ExecutionProperty:   
+        MaxConcurrentRuns: 1  
+      Name: !Ref CFNJobName	    
+
